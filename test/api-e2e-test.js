@@ -7,7 +7,7 @@ chai.use(chaiHttp);
 describe('RESTful API for two resources', () => {
 
   before(done => {
-    
+
   });
 
   it('Does something', () => {
