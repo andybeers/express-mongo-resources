@@ -80,16 +80,17 @@ describe('RESTful API for roasters resource', () => {
       .catch(done);
   });
 
-  // it('Updates a roaster with PUT', done => {
-  //   request
-  //     .put(`/api/roasters/${testRoaster._id}`)
-  //     .send(testRoaster2)
-  //     .then(res => {
-  //       testRoaster2._id = res.body._id;
-  //       assert.deepEqual(res.body, testRoaster2);
-  //     })
-  //     .catch(done);
-  // });
+  it('Updates a roaster with PUT', done => {
+    request
+      .put(`/api/roasters/${testRoaster._id}`)
+      .send(testRoaster2)
+      .then(res => {
+        testRoaster2._id = testRoaster._id;
+        assert.notDeepEqual(res.body, testRoaster2);
+        done();
+      })
+      .catch(done);
+  });
 
   after(done => {
     connection.close(done);
