@@ -1,6 +1,5 @@
 const chai = require('chai');
 const chaiHttp = require('chai-http');
-const server = require('../server.js');
 const assert = chai.assert;
 chai.use(chaiHttp);
 
@@ -17,7 +16,7 @@ describe('RESTful API for roasters resource', () => {
     function dropCollection() {
       const name = 'roasters';
       connection.db
-        .listConnections({ name })
+        .listCollections({ name })
         .next((err, info) => {
           if (!info) return done();
           connection.db.dropCollection(name, done);
@@ -30,6 +29,21 @@ describe('RESTful API for roasters resource', () => {
     name: 'Heart Roasters',
     locations: 2
   };
+  const testRoaster2 = {
+    name: 'Heart',
+    locations: 5,
+    __v: 0
+  };
+
+  it('Starts with empty collection', done => {
+    request
+      .get('/api/roasters')
+      .then(res => {
+        assert.deepEqual(res.body, []);
+        done();
+      })
+      .catch(done);
+  });
 
   it('Adds a roaster to the collection', done => {
     request
@@ -40,16 +54,45 @@ describe('RESTful API for roasters resource', () => {
         assert.ok(roaster._id);
         testRoaster._id = roaster._id;
         testRoaster.__v = 0;
+        done();
       })
       .catch(done);
   });
 
-  it('Does something', () => {
-
+  it('Gets roaster by Id', done => {
+    request
+      .get(`/api/roasters/${testRoaster._id}`)
+      .then(res => {
+        const resRoaster = res.body;
+        assert.deepEqual(resRoaster, testRoaster);
+        done();
+      })
+      .catch(done);
   });
 
-  it('Does something', () => {
+  it('Gets all roasters', done => {
+    request
+      .get('/api/roasters')
+      .then(res => {
+        assert.deepEqual(res.body, [ testRoaster ]);
+        done();
+      })
+      .catch(done);
+  });
 
+  // it('Updates a roaster with PUT', done => {
+  //   request
+  //     .put(`/api/roasters/${testRoaster._id}`)
+  //     .send(testRoaster2)
+  //     .then(res => {
+  //       testRoaster2._id = res.body._id;
+  //       assert.deepEqual(res.body, testRoaster2);
+  //     })
+  //     .catch(done);
+  // });
+
+  after(done => {
+    connection.close(done);
   });
   
 });
